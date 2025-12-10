@@ -2,7 +2,7 @@ import { Router } from "express";
 import { authentication, authorization } from "../../middleware/auth.middleware.js";
 import { validation } from "../../middleware/validation.middleware.js";
 import * as validators from "./user.validation.js"
-import { changePrivilges, coverImage, dashboard, identity, replaceEmail, shareProfile, updateBasicProfile, updateEmail, updateImage, updatePassword, userProfile } from "./services/user.services.js";
+import { addFriend, changePrivilges, coverImage, dashboard, identity, replaceEmail, shareProfile, updateBasicProfile, updateEmail, updateImage, updatePassword, userProfile } from "./services/user.services.js";
 import { fileValidationTypes, uploadDiskFile } from "../../utils/multer/local.multer.js";
 import { uploadCloudFile } from "../../utils/multer/cloud.multer.js";
 import { endPoint } from "./user.authorization.js";
@@ -18,6 +18,7 @@ router.patch ("/profile/replace-email",validation(validators.replaceEmail) ,auth
 // router.patch ("/profile/image" ,authentication() , uploadDiskFile("user/profile",fileValidationTypes.image).single("image") ,updateImage)
 
 router.patch ("/profile/image" ,authentication() , uploadCloudFile(fileValidationTypes.image).single("image") ,updateImage)
+router.patch ("/friend/:friendId/add" ,authentication()  ,addFriend)
 
 // router.patch ("/profile/image/cover" ,authentication() , uploadDiskFile("user/profile/cover",fileValidationTypes.image).array("image",6 ) ,coverImage)
 

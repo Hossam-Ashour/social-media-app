@@ -4,10 +4,11 @@ import * as dbService from "../../../DB/db.service.js"
 import { model } from "mongoose";
 import cloudinary from "../../../utils/multer/cloudinary.js";
 import { successResponse } from "../../../utils/response/success.response.js";
-import { roleTypes, userModel } from "../../../DB/model/user.model.js";
+import { roleTypes, socketConnection, userModel } from "../../../DB/model/user.model.js";
 import { commentModel } from "../../../DB/model/comment.model.js";
 import { populate } from "dotenv";
 import { paginate } from "../../../utils/pagination.js";
+import { getIo } from "../../chat/chat.socket.controller.js";
 const populateList=[
     {path:"userId" , select:"userName image"},
     {path:"comments",match:{commentId:{$exists:false}} ,populate:[{path:"reply"}] },
@@ -61,7 +62,7 @@ export const createPost= asyncHandler(async(req,res,next)=>{
 })
 
 
-export const updatePost= asyncHandler(async(req,res,next)=>{
+export const updatePost = asyncHandler(async(req,res,next)=>{
     if(req.files.length){
 
         const attachments=[]
@@ -145,6 +146,8 @@ export const likePost= asyncHandler(async(req,res,next)=>{
         data,
         options:{new:true}
     })
+
+    getIo().to(socketConnection.get(post.userId.toString())).emit("likePost" , {postId:req.params.postId , likedBy:req.user._id , action})
     return post? successResponse({res , status:200,data:{post}}):next(new Error("in-valid post ID ",{cause:404}))
 })
 

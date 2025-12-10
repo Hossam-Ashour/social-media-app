@@ -1,6 +1,7 @@
 import Joi from "joi"
 import { Types } from "mongoose"
 import { genderTypes } from "../DB/model/user.model.js"
+import { json } from "express"
 const checkObjectId=(value,helper)=>{
     return Types.ObjectId.isValid(value)?true:helper.message("in-valid ObjectId")
 
@@ -47,3 +48,17 @@ export const validation=(schema)=>{
         return next()
     }
 }
+
+
+export const validationGraphQl=async ({schema, args={}}={})=>{
+   
+     
+        const validationResult=schema.validate(args,{ abortEarly:false })
+        if(validationResult.error){
+            throw new Error(JSON.stringify({
+                message:"validation error",
+                details:validationResult.error.details
+            }))
+        }
+        return true
+    }

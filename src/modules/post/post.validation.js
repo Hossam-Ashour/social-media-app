@@ -1,5 +1,6 @@
 import Joi from "joi";
 import { generalFields } from "../../middleware/validation.middleware.js";
+import { token } from "morgan";
 
 export const createPost = Joi.object().keys({
     content:Joi.string().min(2).max(20000).trim(),
@@ -27,6 +28,15 @@ export const likePost = Joi.object().keys({
     action:Joi.string().valid("like","unlike").default("like")
     
 }).required()
+
+
+export const likePostGraph = Joi.object().keys({
+    postId:generalFields.id.required(),
+    action:Joi.string().valid("like","unlike").default("like"),
+    token:Joi.string().required()
+    
+}).required()
+
 
 
 

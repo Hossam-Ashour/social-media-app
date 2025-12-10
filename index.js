@@ -4,9 +4,12 @@ dotenv.config({path:path.resolve("./src/config/.env.dev")})
 import express from "express"
 import bootstrap from "./src/app.controller.js"
 import chalk from "chalk"
+import { runIo } from "./src/modules/chat/chat.socket.controller.js"
 const app=express()
-const port =process.env.PORT || 5000
+const port =process.env.PORT || 4000
 bootstrap(app , express)
-app.listen(port,()=>{
+const httpServer=app.listen(port,()=>{
     console.log(chalk.bgGreen(`successfuly... Server Running on the port ${port} `))
 })
+
+runIo(httpServer)

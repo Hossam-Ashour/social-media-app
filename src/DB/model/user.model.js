@@ -74,7 +74,7 @@ const userSchema=new Schema({
     // image:String,
     image:{public_id : String , secure_url : String},
 
-    coverImage:{public_id : String , secure_url : String},
+    coverImage:[{public_id : String , secure_url : String}],
 
     phone:String,
 
@@ -86,11 +86,13 @@ const userSchema=new Schema({
     },
      isDeleted:{
         type:Boolean,
-        default:false
+       
     },
 
     changeCridentialsTime:Date,
     viewrs:[{userId:{type:Types.ObjectId , ref:"User"},time:Date}],
+    friends:[{type:Types.ObjectId , ref:"User"}],
+
     
     modifiedBy:{type:Types.ObjectId , ref:"User"}
 
@@ -198,3 +200,5 @@ const userSchema=new Schema({
 // })
 
 export const userModel=mongoose.models.User|| model("User",userSchema)
+export const socketConnection= new Map()
+

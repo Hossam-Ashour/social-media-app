@@ -34,7 +34,7 @@ export const decodeToken=async({authorization="",tokenType=tokenTypes.access }={
         
             const user =await dbServise.findOne({
                 model:userModel,
-                filter:{_id:decoded.id , isDeleted:false}
+                filter:{_id:decoded.id , isDeleted:{$exists:false}}
             })
         
             if(!user){

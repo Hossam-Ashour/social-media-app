@@ -15,7 +15,10 @@ export const userProfile = asyncHandler
 const user =await dbService.findOne({
     model:userModel,
     filter:{_id:req.user._id},
-    populate:[{path:"viewrs.userId", select:"userName email "}]
+    populate:[
+      {path:"friends", select:"userName image"},
+      {path:"viewrs.userId", select:"userName email "}
+    ]
 
 })
 return successResponse({res, data:{user}})
@@ -166,6 +169,48 @@ export const updateImage= asyncHandler
 
   
     return successResponse({res, data:{file: req.file , user}})
+
+  
+})
+          
+
+
+export const addFriend= asyncHandler
+(async(req,res,next)=>{
+
+  const{friendId}=req.params
+
+  const friend = await dbService.findOneAndUpdate({
+    model:userModel,
+    filter:{
+           _id:friendId,
+           isDeleted:{$exists:false}
+    },
+    data:{
+      $addToSet:{friends:req.user._id}
+    },
+    options:{
+      new :true
+    }
+  })
+  
+  if(!friend){
+    return next (new Error ("not found friend "),{cause:404})
+  }
+
+  const user = await dbService.findByIdAndUpdate({
+    model:userModel,
+   id:req.user._id,
+    data:{
+      $addToSet:{friends:friendId}
+    },
+    options:{
+      new :true
+    }
+  })
+ 
+  
+    return successResponse({res, data:{}})
 
   
 })

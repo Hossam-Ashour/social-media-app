@@ -10,6 +10,9 @@ import ratelimit from 'express-rate-limit'
 import helmet from "helmet"
 import morgan from "morgan"
 import chalk from "chalk"
+import { createHandler } from 'graphql-http/lib/use/express';
+import {schema} from "./modules/modules.schema.js"
+import chatController from "./modules/chat/chat.controller.js"
 
 const limiter = ratelimit({
     limit:5,
@@ -36,10 +39,11 @@ const bootstrap=(app,express)=>{
 //     }
 //   }
 // }
-app.use(morgan("dev"))
+ app.use(cors())
+ app.use(morgan("dev"))
  app.use(helmet())
  app.use("/auth",limiter)
-app.use(cors())
+
 
 // app.use(async(req,res,next)=>{
 //     console.log(req.header("origin"))
@@ -84,13 +88,17 @@ async function test (){
 }test()
 app.use("/uploads" , express.static(path.resolve('./src/uploads')))
 
+
 app.get("/",(req,res,next)=>{
     
     return res.status(200).json({message:"Welcome in social media app by NodeJs"})
 })
 
+
+app.use("/graphql", createHandler({schema}))
 app.use("/auth",authController)
 app.use("/user",userController)
+app.use("/chat",chatController)
 app.use("/post" ,postController)
 
 
